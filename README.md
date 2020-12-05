@@ -15,4 +15,5 @@
       - Tutorial
       - Help
       
-2. Message organization. Only memebers with a role may talk about CrewLink in non-CrewLink channels (controllable via the config).
+2. Message organization. 
+      - Only memebers with a role may talk about CrewLink in non-CrewLink channels (controllable via the config).
