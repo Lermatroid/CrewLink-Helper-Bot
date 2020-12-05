@@ -13,8 +13,8 @@ var config = {
 
     ],
     lock_chat_to_crewlinkhelp: true,
-    version: "v1.0",
-    token: "your_token_here"
+    version: "v1.1",
+    token: ""
 }
 
 client.on('ready', () => {
@@ -27,11 +27,12 @@ client.on('ready', () => {
 client.on("message", function(msg){
 
     if (msg.author.bot) return;
+    if (msg.channel.type == "dm") return;
     //console.log(JSON.stringify(msg.member.roles.cache));
 
-    if (msg.content.toLowerCase().includes("crewlink") && msg.channel.name !== 'crewlink-help' && config.lock_chat_to_crewlinkhelp && !userHasRoles(msg.member.roles.cache)){
+    if (msg.content.toLowerCase().includes("crewlink") && msg.channel.name !== 'crewlink-help' && msg.channel.name !== 'gaming' && config.lock_chat_to_crewlinkhelp && !userHasRoles(msg.member.roles.cache)){
 
-        msg.author.send("```Sorry, your message was deleted becuase it was posted in a non-CrewLink related channel. \n\nPlease send it to #crewlink-help instead.```")
+        msg.author.send("```Sorry, your message was deleted becuase it was posted in a non-CrewLink related channel. \n\nPlease send it to #crewlink-help or #gaming instead.```")
         msg.delete();
 
     }
@@ -39,6 +40,8 @@ client.on("message", function(msg){
     if (msg.content.toLowerCase().split(" ")[0] === config.prefix + "servers"){
 
         //console.log(msg.content);
+
+        if(msg.channel.name !== 'crewlink-help' && !userHasRoles(msg.member.roles.cache)){ msg.author.send("```Sorry, CrewLink Bot commands can only be ran in the #crewlink-help channel. Please re-send your command there.```"); msg.delete(); return;}
 
         const serversEmbed = new Discord.MessageEmbed()
 	    .setColor('#853ddc')
@@ -67,6 +70,7 @@ client.on("message", function(msg){
     if (msg.content.toLowerCase().split(" ")[0] === config.prefix + "faq"){
 
         //console.log(msg.content);
+        if(msg.channel.name !== 'crewlink-help' && !userHasRoles(msg.member.roles.cache)){ msg.author.send("```Sorry, CrewLink Bot commands can only be ran in the #crewlink-help channel. Please re-send your command there.```"); msg.delete(); return;}
 
         const faqEmbed = new Discord.MessageEmbed()
 	    .setColor('#853ddc')
@@ -88,11 +92,14 @@ client.on("message", function(msg){
 
     if (msg.content.toLowerCase().split(" ")[0] === config.prefix + "tutorial"){
 
+        if(msg.channel.name !== 'crewlink-help' && !userHasRoles(msg.member.roles.cache)){ msg.author.send("```Sorry, CrewLink Bot commands can only be ran in the #crewlink-help channel. Please re-send your command there.```"); msg.delete(); return;}
         msg.channel.send("Follow this tutorial for instructions on how to download CrewLink: https://www.youtube.com/watch?v=_8F4f5iQEIc")
 
     }
 
     if (msg.content.toLowerCase().split(" ")[0] === config.prefix + "help"){
+
+        if(msg.channel.name !== 'crewlink-help' && !userHasRoles(msg.member.roles.cache)){ msg.author.send("```Sorry, CrewLink Bot commands can only be ran in the #crewlink-help channel. Please re-send your command there.```"); msg.delete(); return;}
 
         var helpEmbed = new Discord.MessageEmbed()
         .setColor('#853ddc')
