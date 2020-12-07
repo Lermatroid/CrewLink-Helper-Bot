@@ -1,21 +1,29 @@
 const Discord = require('discord.js');
 const client = new Discord.Client({autoReconnect:true});
 
+const request = require('request');
 
 var config = {
     prefix: "!",
-    servers: [
-
-        {url: "[Oceanic] http://crewlink.theskeld.xyz\n[North America] http://crewlink1.theskeld.xyz", author: "My Name Is Tito"},
-        {url: "https://crewlink.among-us.tech", author: "Cobchise"},
-        {url: "http://crewlink.glitch.me", author: "Lermatroid"},
-        {url: "http://45.32.220.8:9736", author: "{u}bergeek77"}
-
-    ],
     lock_chat_to_crewlinkhelp: true,
-    version: "v1.1",
+    version: "v1.2",
     token: ""
 }
+
+var servers = [
+
+    {region: "North America", url: "https://crewlink.among-us.tech", author: "Cobchise", uptimeid: "", playercount: "Loading Player Count"},
+    {region: "North America", url: "https://crewlink.glitch.me", author: "Lermatroid", uptimeid: "", playercount: "Loading Player Count"},
+    {region: "North America", url: "http://54.193.94.35:9736", author: "Ottomated", uptimeid: "", playercount: "Loading Player Count"},
+    {region: "Oceania", url: "http://s1.theskeld.xyz", author: "Tito", uptimeid: "", playercount: "Loading Player Count"},
+    {region: "North America", url: "http://s2.theskeld.xyz", author: "Tito", uptimeid: "", playercount: "Loading Player Count"},
+    {region: "North America", url: "http://s3.theskeld.xyz", author: "Tito", uptimeid: "", playercount: "Loading Player Count"},
+    {region: "Europe", url: "http://s4.theskeld.xyz", author: "Tito", uptimeid: "", playercount: "Loading Player Count"},
+    {region: "North America", url: "http://45.32.220.8:9736", author: "Ubergeek77", uptimeid: "", playercount: "Loading Player Count"}
+
+]
+
+//{url: "[North America] http://45.32.220.8:9736", author: "{u}bergeek77", uptimeid: "", playercount: "Loading Player Count"}
 
 client.on('ready', () => {
 
@@ -48,13 +56,13 @@ client.on("message", function(msg){
 	    .setTitle('Crewlink Alternate Servers:')
         .setAuthor('CrewLink Help', 'https://github.com/ottomated/CrewLink/raw/master/logo.png', 'https://github.com/ottomated/CrewLink')
         .setDescription("Due to the popularity of CrewLink, the main server is often down or overloaded. It is recommended you use one of the following servers instead by setting it as the voice server in CrewLink Settings. **Note:** Make sure you copy the URL exactly!")
-        .addField('\u200b', 'Servers:')
-        .setURL("https://github.com/ottomated/CrewLink-server");
+        .addField('\u200b', '**Servers** (Player counts are updated every 30 sec)')
+        .setURL("https://crewlinkstatus.xyz/");
         
 
-        config.servers.forEach(function(i, index){
+        servers.forEach(function(i, index){
 
-            serversEmbed.addField(`${i.author}'s Server:`, "`" + i.url + "`", false);
+            serversEmbed.addField(`${i.author}'s Server | ${i.playercount} | ${i.region}` , "`" + i.url + "`" , false);
 
         });
 
@@ -136,3 +144,30 @@ function userHasRoles(m){
     return hasRoles;
 
 }
+
+async function updatePlayerCount(){
+    servers.forEach(function(i, index){
+
+        request(i.url, function(err, res, body){
+            
+            if(err == null){
+
+                if(!body.includes("Cannot GET /")){
+                    servers[index].playercount = body.substring(body.indexOf("are currently ") + 14).split(" ")[0] + ' Players';
+                } else {
+                    servers[index].playercount = "Offline";
+                }       
+
+            } else {
+                servers[index].playercount = "Offline";
+                console.log(err);
+            }
+
+        })
+
+    });
+}
+
+updatePlayerCount();
+
+setInterval(updatePlayerCount, 30000);
